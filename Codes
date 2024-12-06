@@ -1,1 +1,193 @@
 
+# Install necessary packages
+!pip3 install mapminer
+!pip3 install holoviews
+!pip3 install panel
+!pip3 install hvplot
+
+# Import necessary libraries
+from mapminer.miner import *  # For fetching building data
+import holoviews as hv  # For visualization
+import geopandas as gpd  # For handling geospatial data
+import hvplot.pandas  # For enabling .hvplot() on pandas DataFrames
+import panel as pn  # For creating interactive panels if needed
+
+# Create a miner object to fetch building data
+miner = GoogleBuildingMiner()
+
+# Define latitude, longitude, and radius for the area of interest
+#lat, lon =  25 , 67
+lat, lon =  24.903 , 67.116
+# Example coordinates (adjust as needed)
+radius = 1000  # Radius in meters
+
+# Fetch the data
+df = miner.fetch(lat, lon, radius)
+
+
+# Display the first few rows of the DataFrame
+print(df.head())
+
+# Check the 'geometry' column for spatial data
+print(df.geometry)
+print(df.geometry.geom_type.unique())
+
+
+
+ df.hvplot(geo=True, color='red', alpha=0.4, line_width=1, title='Building Footprints') .opts(width=1000, height=800, bgcolor="white")
+
+!pip install hvplot
+!pip install geoviews
+
+import hvplot.pandas
+import geoviews as gv
+
+# Assuming 'df' is your DataFrame with geospatial data
+
+# Corrected line: Replace 'df_plot' with 'df.hvplot'
+df.hvplot(geo=True, color='red', alpha=0.4, line_width=1, title='Building Footprints') .opts(width=1000, height=800, bgcolor="white")
+
+# Create the ESRI basemap
+import holoviews as hv
+esri_basemap = hv.element.tiles.EsriImagery().opts(width=1000, height=800, bgcolor="black")
+import hvplot.pandas
+# Assuming 'df' is your DataFrame with geospatial data
+# Create the building footprint plot using hvplot
+df_plot = df.hvplot(geo=True, color='red', alpha=0.4, line_width=1, title='Building Footprints') .opts(width=1000, height=800, bgcolor="white")
+
+# Combine the ESRI basemap and the building footprints
+combined_plot = esri_basemap * df_plot
+
+# Show the plot in an interactive environment
+hv.extension('bokeh')  # Ensure that bokeh is used for visualization
+combined_plot
+
+!pip install hvplot
+!pip install geoviews
+
+import hvplot.pandas
+import geoviews as gv
+
+# Assuming 'df' is your DataFrame with geospatial data
+
+# Corrected line: Replace 'df_plot' with 'df.hvplot'
+df.hvplot(geo=True, color='red', alpha=0.4, line_width=0.5, title='Building Footprints KHI') .opts(width=2400, height=1600, bgcolor="white")
+
+# Install necessary packages
+!pip install mapminer
+!pip install holoviews
+!pip install panel
+!pip install hvplot
+!pip install geopandas
+
+# Import necessary libraries
+from mapminer.miner import *  # For fetching building data
+import holoviews as hv  # For visualization
+import geopandas as gpd  # For handling geospatial data
+import hvplot.pandas  # For enabling .hvplot() on pandas DataFrames
+import panel as pn  # For creating interactive panels if needed
+
+# Create a miner object to fetch building data
+miner = GoogleBuildingMiner()
+
+# Define latitude, longitude, and radius for the area of interest
+lat, lon = 24.903, 67.116  # Example coordinates (adjust as needed)
+radius = 1000  # Radius in meters
+
+# Fetch the data
+df = miner.fetch(lat, lon, radius)
+
+# Convert to GeoDataFrame
+gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")  # Set CRS to WGS84
+
+# Save as Shapefile
+output_path = "building_footprints.shp"
+gdf.to_file(output_path, driver='ESRI Shapefile')
+
+print(f"Shapefile saved to {output_path}")
+
+# Visualization (optional)
+df.hvplot(geo=True, color='red', alpha=0.4, line_width=1, title='Building Footprints').opts(width=1000, height=800, bgcolor="white")
+
+
+gdf.hvplot
+
+
+# Install necessary packages
+!pip3 install mapminer
+!pip3 install holoviews
+!pip3 install panel
+!pip3 install hvplot
+
+# Import necessary libraries
+from mapminer.miner import *  # For fetching building data
+import holoviews as hv  # For visualization
+import geopandas as gpd  # For handling geospatial data
+import hvplot.pandas  # For enabling .hvplot() on pandas DataFrames
+import panel as pn  # For creating interactive panels if needed
+
+
+# Display the first few rows of the DataFrame
+print(df.head())
+
+# Check the 'geometry' column for spatial data
+print(df.geometry)
+print(df.geometry.geom_type.unique())
+
+# Install necessary packages
+!pip install mapminer
+!pip install holoviews
+!pip install panel
+!pip install hvplot
+!pip install geopandas
+
+# Import necessary libraries
+from mapminer.miner import *  # For fetching building data
+import holoviews as hv  # For visualization
+import geopandas as gpd  # For handling geospatial data
+import hvplot.pandas  # For enabling .hvplot() on pandas DataFrames
+import panel as pn  # For creating interactive panels if needed
+
+# Create a miner object to fetch building data
+miner = GoogleBuildingMiner()
+
+# Define latitude, longitude, and radius for the area of interest
+lat, lon = 24.903, 67.116  # Example coordinates (adjust as needed)
+radius = 1000  # Radius in meters
+
+# Fetch the data
+df = miner.fetch(lat, lon, radius)
+
+# Convert to GeoDataFrame
+gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")  # Set CRS to WGS84
+
+# Save as Shapefile
+output_path = "1building_footprints.shp"
+gdf.to_file(output_path, driver='ESRI Shapefile')
+
+print(f"Shapefile saved to {output_path}")
+
+
+
+
+from shapely.geometry import Point
+import numpy as np
+
+# Grid setup for building density analysis
+grid_size = 100  # Grid cell size in meters
+bounds = df.total_bounds  # Get bounds of the fetched area
+x_min, y_min, x_max, y_max = bounds
+x_range = np.arange(x_min, x_max, grid_size)
+y_range = np.arange(y_min, y_max, grid_size)
+
+# Count buildings in each grid cell
+density_data = []
+for x in x_range:
+    for y in y_range:
+        cell = Point(x, y).buffer(grid_size / 2).envelope
+        count = df[df.geometry.within(cell)].shape[0]
+        density_data.append({'geometry': cell, 'count': count})
+
+#df.hvplot.hist('area', bins=30, title="Distribution of Building Footprint Areas")
+# Replace 'area' with 'area_in_meters' in the hist function call
+df.hvplot.hist('area_in_meters', bins=30, title="Distribution of Building Footprint Areas sq m")
